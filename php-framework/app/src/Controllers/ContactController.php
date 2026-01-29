@@ -10,49 +10,26 @@ class ContactController extends AbstractController{
     private const CONTACT_DIRECTORY = __DIR__.'/../../var/contacts';
 
     public function process(Request $request): Response{
-        $body = $request->getBody();
 
+        $method = $request->getMethod();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // check if the body is json (transferred as array)
-        if (!is_array($body)) {
-            return new Response('Invalid JSON body', 400, []);
+        switch ($method){
+            case 'POST':
+                $this->processPost($request);
         }
 
-        // check if body has right properties and missing properties, otherwise 400
-        $extraKeys = array_diff(array_keys($body), self::ALLOWED_FIELDS);
-        if (!empty($extraKeys)) {
-            return new Response(
-                'Unexpected properties: ' . implode(', ', $extraKeys) .
-                "\nExpected properties: " . implode(', ', SELF::ALLOWED_FIELDS),
-                400,
-                []
-            );
-        }
 
-        $missingKey = $this->getMissingKey($body);
-        if ($missingKey !== null) {
-            return new Response("Missing property: {$missingKey} \n", 400, []);
-        }
 
-        foreach (self::ALLOWED_FIELDS as $key) {
-            if (!array_key_exists($key, $body)) {
-                return new Response("Missing property: {$key} \n", 400, []);
-            }
-        }
+
+
+
+
+
+
+
+
+
+
 
         // sava data
         $currentTimeStamp = time();
@@ -85,30 +62,55 @@ class ContactController extends AbstractController{
         return null;
     }
 
-    private function checkBody(Request $request): bool
-    {
-        if ($this->body !== null) {
-            return $this->body;
-        }
-
-        // Check if json
-        $contentType = $this->getHeaders()["Content-Type"] ?? $_SERVER['CONTENT_TYPE'] ?? $_SERVER['HTTP_CONTENT_TYPE'] ?? null;
+    private function checkBodyJSON(Request $request): bool{
+        $contentType = $request->getHeaders()["Content-Type"] ?? $_SERVER['CONTENT_TYPE'] ?? $_SERVER['HTTP_CONTENT_TYPE'] ?? null;
         if (stripos($contentType, 'application/json') === false) {
-            throw new \RuntimeException('Content-Type must be application/json');
+            return false;
+        }else
+            return true;
+    }
+
+    private function processPost(Request $request): Response{
+        if (!$this->checkBodyJSON($request)){
+            return new Response("Invalid JSON body \n", 400, []);
         }
 
-        // get json
-        $raw = file_get_contents('php://input');
-        $data = json_decode($raw, true);
+        $body = json_decode($request->getBody(), true); //return arrays
 
-        if (!is_array($data)) {
-            throw new \RuntimeException('Invalid JSON body');
+        $checkExtra = $this->checkBodyExtraProperties($body);
+        if (!$checkExtra){
+            return $checkExtra;
         }
 
-        $this->body = $data;
-        return $this->body;
+        $checkMissing =$this->checkBodyMissingProperties($body);
+        if (!$checkMissing){
+            return $checkMissing;
+        }
+
+
+
+        return new Response();
+    }
+
+    private function checkBodyExtraProperties(array $body): Response|bool{
+        $extraKeys = array_diff(array_keys($body), self::ALLOWED_FIELDS);
+        if (!empty($extraKeys)) {
+            return new Response(
+                'Unexpected properties: ' . implode(', ', $extraKeys) .
+                "\nExpected properties: " . implode(', ', SELF::ALLOWED_FIELDS),
+                400,
+                []
+            );
+        }
         return false;
     }
 
+    private function checkBodyMissingProperties(array $body): Response|bool{
+        $missingKey = $this->getMissingKey($body);
+        if ($missingKey !== null) {
+            return new Response("Missing property: {$missingKey} \n", 400, []);
+        }
+        return false;
+    }
 
 }
