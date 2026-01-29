@@ -1,4 +1,5 @@
 app/vendor
+app/var/
 ../.idea/
 log/
 mysql/
