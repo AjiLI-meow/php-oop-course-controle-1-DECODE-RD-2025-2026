@@ -28,11 +28,24 @@ class ContactController extends AbstractController{
             }
         }
 
-        return new Response('hello world', 400, []);
+        // sava data
+        $currentTimeStamp = time();
+        $contact = [
+            'email' => (string) $body['email'],
+            'subject' => (string) $body['subject'],
+            'message' => (string) $body['message'],
+            'dateOfCreation' => $currentTimeStamp,
+            'dateOfLastUpdate' => $currentTimeStamp,
+        ];
+
+        $contact_dir = __DIR__.'/../../var/contacts';
+        $emailSafe = preg_replace('/[^A-Za-z0-9._@-]/', '_', $contact['email']);
+        $file_name = $contact['dateOfCreation'].'_'.$emailSafe.'.json'; // what if mail have carac not allowed ?
+        file_put_contents($file_name, json_encode($contact, JSON_PRETTY_PRINT));
 
 
 
 
-
+        return new Response('Saved', 201, []);
     }
 }
