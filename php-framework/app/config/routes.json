@@ -5,13 +5,13 @@
     "controller": "TestController"
   },
   {
-    "path": "/foobarr",
-    "method": "GET",
-    "controller": "FoobarrController"
+    "path": "/contact",
+    "method": "POST",
+    "controller": "ContactController"
   },
   {
     "path": "/contact",
-    "method": "POST",
+    "method": "GET",
     "controller": "ContactController"
   }
 ]

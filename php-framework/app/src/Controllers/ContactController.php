@@ -12,6 +12,21 @@ class ContactController extends AbstractController{
     public function process(Request $request): Response{
         $body = $request->getBody();
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         // check if the body is json (transferred as array)
         if (!is_array($body)) {
             return new Response('Invalid JSON body', 400, []);
@@ -69,5 +84,31 @@ class ContactController extends AbstractController{
         }
         return null;
     }
+
+    private function checkBody(Request $request): bool
+    {
+        if ($this->body !== null) {
+            return $this->body;
+        }
+
+        // Check if json
+        $contentType = $this->getHeaders()["Content-Type"] ?? $_SERVER['CONTENT_TYPE'] ?? $_SERVER['HTTP_CONTENT_TYPE'] ?? null;
+        if (stripos($contentType, 'application/json') === false) {
+            throw new \RuntimeException('Content-Type must be application/json');
+        }
+
+        // get json
+        $raw = file_get_contents('php://input');
+        $data = json_decode($raw, true);
+
+        if (!is_array($data)) {
+            throw new \RuntimeException('Invalid JSON body');
+        }
+
+        $this->body = $data;
+        return $this->body;
+        return false;
+    }
+
 
 }
