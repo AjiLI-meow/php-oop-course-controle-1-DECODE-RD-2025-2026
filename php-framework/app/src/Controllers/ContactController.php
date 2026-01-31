@@ -139,7 +139,15 @@ class ContactController extends AbstractController{
     }
 
     private function processDelete(Request $request): Response{
+        $id = $request->getParams()['id'];
+        $isContactExisting = $this->checkContactById($id);
+        if($isContactExisting instanceof Response){
+            return $isContactExisting;
+        }
 
+        $contactService = new ContactService();
+        $contactService->deleteContactById($id);
 
+        return new Response("", 204, []);
     }
 }

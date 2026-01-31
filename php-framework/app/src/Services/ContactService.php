@@ -62,6 +62,7 @@ class ContactService{
     }
 
     public function deleteContactById(string $id): void{
-
+        $filePath = self::CONTACT_DIRECTORY.'/'.$id.'.json';
+        unlink($filePath);
     }
 }
