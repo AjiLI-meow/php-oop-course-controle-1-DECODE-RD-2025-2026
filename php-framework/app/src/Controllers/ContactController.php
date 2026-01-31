@@ -20,6 +20,8 @@ class ContactController extends AbstractController{
             case 'GET':
                 return $this->processGet($request);
                 break;
+            case 'PATCH':
+                return $this->processPatch($request);
             default:
                 Return new Response('Method Not Allowed', 405, []);
         }
@@ -35,11 +37,7 @@ class ContactController extends AbstractController{
     }
 
     private function processPost(Request $request): Response{
-        if (!$this->isBodyJSON($request)){
-            return new Response("JSON required \n", 400, []);
-        }
-
-        $body = json_decode($request->getBody(), true); //return arrays
+        $body = $this->getJsonBody($request);
 
         $contactValidator = new ContactValidator();
         if(!$contactValidator->isBodyValid($body)){
@@ -80,5 +78,19 @@ class ContactController extends AbstractController{
             return $this->processGetById($request);
         }
         return $this->processGetAll($request);
+    }
+
+    private function processPatch(Request $request): Response{
+        $body = $this->getJsonBody($request);
+
+
+        return new Response("Patch required \n", 400, []);
+    }
+
+    private function getJsonBody(Request $request): array{
+        if (!$this->isBodyJSON($request)){
+            return new Response("JSON required \n", 400, []);
+        }
+        return json_decode($request->getBody(), true); //return arrays
     }
 }
