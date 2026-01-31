@@ -24,7 +24,6 @@ class ContactController extends AbstractController{
                 Return new Response('Method Not Allowed', 405, []);
         }
 
-
     }
 
     private function isBodyJSON(Request $request): bool{
@@ -55,7 +54,12 @@ class ContactController extends AbstractController{
     }
 
     private function processGet(Request $request): Response{
-        return new Response('hello world from get', 200, []);
+
+        $contactService = new ContactService();
+        $allContacts = $contactService->getAllContacts();
+        $allContacts = json_encode($allContacts);
+
+        return new Response($allContacts, 200, ['Content-type' => 'application/json']);
     }
 
 }

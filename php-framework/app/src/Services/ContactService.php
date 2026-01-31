@@ -21,6 +21,17 @@ class ContactService{
         file_put_contents(SELF::CONTACT_DIRECTORY.'/'.$fileName, json_encode($contact, JSON_PRETTY_PRINT));
     }
 
+    public function getAllContacts(): array{
+        $allContacts = [];
+        $files = glob(SELF::CONTACT_DIRECTORY.'/*.json');
 
+        foreach($files as $file){
+            $allContacts = array_merge(
+                $allContacts,
+                json_decode(file_get_contents($file), true)
+            );
+        }
+        return $allContacts;
+    }
 
 }
