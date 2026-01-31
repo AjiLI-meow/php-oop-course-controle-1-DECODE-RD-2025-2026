@@ -12,7 +12,7 @@ class Router {
     
 
     public static function route(Request $request): Response {
-        $config = self::getConfig();
+        $config = self::getConfig(); //routes.json but array
 
         foreach($config as $route) {
             if(self::checkMethod($request, $route) === false || self::checkUri($request, $route) === false) {
@@ -31,8 +31,7 @@ class Router {
         $routesConfig = json_decode($routesConfigContent, true);
 
         return $routesConfig;
-    }
-
+    } //get route.json
 
     private static function checkMethod(Request $request, array $route): bool {
         return $request->getMethod() === $route['method'];
@@ -41,7 +40,12 @@ class Router {
     private static function checkUri(Request $request, array $route): bool {
         return $request->getUri() === $route['path'];
     }
-    
+
+    private function matchUri(Request $request, array $route): bool {
+
+    }
+
+
     private static function getControllerInstance(string $controller): AbstractController {
         $controllerClass = self::CONTROLLER_NAMESPACE_PREFIX . $controller;
 

@@ -25,7 +25,7 @@ class Contact{
 
     public function getId(): string {
         return $this->getFormatedTimestamp() . '_' . $this->getSafeEmail() . '.json';
-    }
+    } // id is filename
 
     private function getSafeEmail(): string{
         return preg_replace('/[^A-Za-z0-9._@-]/', '_', $this->email); //may put a wrong email address ?
