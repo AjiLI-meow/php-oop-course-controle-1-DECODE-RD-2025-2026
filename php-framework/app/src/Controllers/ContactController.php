@@ -40,7 +40,7 @@ class ContactController extends AbstractController{
         $body = $this->getJsonBody($request);
 
         $contactValidator = new ContactValidator();
-        if(!$contactValidator->isBodyValid($body)){
+        if(!$contactValidator->isBodyValidPost($body)){
             return new Response("Invalid JSON body \n", 400, []);
         }
 
