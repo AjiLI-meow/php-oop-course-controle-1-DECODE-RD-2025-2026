@@ -54,6 +54,7 @@ class ContactService{
         }
         $contact['dateOfLastUpdate'] = time();
 
+
         $filePath = self::CONTACT_DIRECTORY.'/'.$id.'.json';
         file_put_contents($filePath, json_encode($contact, JSON_PRETTY_PRINT));
 

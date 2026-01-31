@@ -2,7 +2,7 @@
 
 namespace App\Entities;
 
-class Contact{
+class Contact implements \JsonSerializable{
     public string $email;
     public string $message;
     public string $subject;
@@ -15,11 +15,12 @@ class Contact{
         $this->dateOfCreation = time();
         $this->dateOfLastUpdate = $this->dateOfCreation;
     }
-    public function getDateOfCreation(): \DateTime {
+
+    public function getDateOfCreation(): int {
         return $this->dateOfCreation;
     }
 
-    public function getDateOfLastUpdate(): \DateTime {
+    public function getDateOfLastUpdate(): int {
         return $this->dateOfLastUpdate;
     }
 
@@ -34,5 +35,11 @@ class Contact{
     private function getFormatedTimestamp(): string{
         return date('Y-m-d_H-i-s', $this->dateOfCreation);
     }
+
+    public function jsonSerialize(): array{
+        $vars = get_object_vars($this);
+        return $vars;
+    }
+
 
 }
