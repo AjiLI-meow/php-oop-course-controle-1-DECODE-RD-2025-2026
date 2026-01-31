@@ -38,11 +38,8 @@ class ContactController extends AbstractController{
 
     private function processPost(Request $request): Response{
         $body = $this->getJsonBody($request);
+        $this->isBodyValid($body,$request->getMethod());
 
-        $contactValidator = new ContactValidator();
-        if(!$contactValidator->isBodyValidPost($body)){
-            return new Response("Invalid JSON body \n", 400, []);
-        }
 
         $contactService = new ContactService();
         $contact = $contactService->buildContact($body);
@@ -82,6 +79,8 @@ class ContactController extends AbstractController{
 
     private function processPatch(Request $request): Response{
         $body = $this->getJsonBody($request);
+        $this->isBodyValid($body,$request->getMethod());
+
 
 
         return new Response("Patch required \n", 400, []);
@@ -92,5 +91,22 @@ class ContactController extends AbstractController{
             return new Response("JSON required \n", 400, []);
         }
         return json_decode($request->getBody(), true); //return arrays
+    }
+
+    private function isBodyValid(array $body,string $method){
+        $contactValidator = new ContactValidator();
+        $res = true;
+        switch ($method){
+            case 'POST':
+                $res = $contactValidator->isBodyValidPost($body);
+                break;
+            case 'PATCH':
+                $res = $contactValidator->isBodyValidPatch($body);
+                break;
+        }
+        if ($res === false){
+            return new Response("Invalid JSON body \n", 400, []);
+        }
+        return $res;
     }
 }
