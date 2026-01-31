@@ -19,6 +19,13 @@ class Router {
                 continue;
             }
 
+            $params =self::matchUriParams($request, $route);
+            if ($params === false) {
+                continue;
+            }
+
+            $request->setParams($params);
+
             $controller = self::getControllerInstance($route['controller']);
             return $controller->process($request);
         }
@@ -41,8 +48,16 @@ class Router {
         return $request->getUri() === $route['path'];
     }
 
-    private function matchUri(Request $request, array $route): bool {
+    private static function matchUriParams(Request $request, array $route): array|bool {
+        $path = $route['path'];
 
+        $regex = preg_replace('#\{([a-zA-Z_][a-zA-Z0-9_]*)\}#', '(?P<$1>[^/]+)', $path);
+        $regex = '#^' . $regex . '$#';
+
+        if (preg_match($regex, $request->getUri(), $matches)) {
+            return array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+        }
+        return false;
     }
 
 

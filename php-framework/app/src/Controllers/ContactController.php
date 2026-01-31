@@ -53,13 +53,28 @@ class ContactController extends AbstractController{
         return new Response(json_encode(['file' => $contact->getId()]), 201, ['Content-type' => 'application/json']);
     }
 
-    private function processGet(Request $request): Response{
+    private function processGetAll(Request $request): Response{
 
         $contactService = new ContactService();
         $allContacts = $contactService->getAllContacts();
         $allContacts = json_encode($allContacts);
 
         return new Response($allContacts, 200, ['Content-type' => 'application/json']);
+    }
+
+    private function processGetById(Request $request): Response{
+
+
+        return new Response('yupee',200, ['Content-type' => 'application/json']);
+    }
+
+    private function processGet(Request $request): Response{
+        if ($request->getParams()){
+            $this->processGetById($request);
+        }else{
+            $this->processGetAll($request);
+        }
+
     }
 
 }

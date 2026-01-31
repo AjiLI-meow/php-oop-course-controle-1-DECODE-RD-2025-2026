@@ -32,4 +32,11 @@ class Request {
         return $this->body;
     }
 
+    public function getParams(): array{
+        return $this->params;
+    }
+
+    public function setParams(array $params): void{
+        $this->params = $params;
+    }
 }
