@@ -41,5 +41,4 @@ class Contact implements \JsonSerializable{
         return $vars;
     }
 
-
 }
